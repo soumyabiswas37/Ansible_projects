@@ -1,0 +1,49 @@
+---
+- hosts: all
+  vars:
+    webpackage: "httpd"
+    docroot: "/var/www/html"
+    webservice: "httpd"
+    packages:
+      - "php"
+      - "vlc"
+
+  tasks:
+    - name: "Install {{ webpackage }}"
+      package:
+        name: "{{ webpackage }}"
+        state: present
+      register: x
+
+    - debug:
+        var: x
+
+    - name: "Create Webpage For AWS Machine"
+      copy:
+        content: "This is the Webpage for AWS Linux"
+        dest: "{{ docroot }}/index.html"
+      when: x.rc==0 and ansible_facts.distribution=="Amazon"
+      notify: "Restart webservice"
+
+    - name: "Create webpage for Redhat Linux"
+      copy:
+        content: "This is the webpage for RedHat Linux"
+        dest: "{{ docroot }}/index.html"
+      when: x.rc==0 and ansible_facts.distribution=="RedHat"
+      notify: "Restart webservice"
+
+    - name: "Start Webservice"
+      service:
+        name: "{{ webservice }}"
+        state: started
+
+    - name: "Install other packages"
+      package:
+        name: "{{ packages }}"
+        state: present
+
+  handlers:
+    - name: Restart webservice
+      service: 
+        name: "{{ webservice }}"
+        state: restarted
