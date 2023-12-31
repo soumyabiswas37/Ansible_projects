@@ -21,13 +21,9 @@ ansible --version
 host_key_checking=False
 
 And below settings in Privilege_escalation section:
-# (boolean) Toggles the use of privilege escalation, allowing you to 'become' another user after login.
 become=True
-# (boolean) Toggle to prompt for privilege escalation password.
 become_ask_pass=False
-# (string) Privilege escalation method to use when `become` is enabled.
 become_method=sudo
-# (string) The user your login/remote user 'becomes' when using privilege escalation, most systems will use 'root' when no user is specified.
 become_user=root
 
 - Create a local hosts files and mention the file path in ansible.cfg file to consider the file as hosts file (in general, /
